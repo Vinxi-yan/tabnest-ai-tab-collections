@@ -1,0 +1,28 @@
+# OS and editor files
+.DS_Store
+._*
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Dependencies, generated output and logs
+node_modules/
+dist/
+build/
+coverage/
+*.log
+*.zip
+*.crx
+
+# Local secrets and extension signing keys
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Personal exported browser data
+tabnest-backup-*.json

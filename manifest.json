@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "TabNest AI 标签合集",
+  "version": "0.5.3",
+  "description": "浏览器标签合集工作区：无默认收件箱、无默认空合集；只有主动保存或新建时才创建时间合集。支持拖拽、右键移动、归档、批量管理、导入导出、AI 整理和待办。",
+  "minimum_chrome_version": "114",
+  "permissions": [
+    "tabs",
+    "storage",
+    "sidePanel",
+    "contextMenus"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "打开 TabNest AI 标签合集"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  }
+}

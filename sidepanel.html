@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TabNest AI 标签合集</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div>
+        <div class="brand-row">
+          <h1>TabNest</h1>
+          <span class="badge">AI 标签合集</span>
+        </div>
+        <p>标签页 → 工作区 → 行动</p>
+      </div>
+      <button id="themeToggle" class="icon-btn" title="切换主题" aria-label="切换主题">◐</button>
+    </header>
+
+    <section class="search-wrap">
+      <input id="searchInput" type="search" placeholder="搜索已保存的标签页…" autocomplete="off" />
+    </section>
+
+    <section class="primary-actions">
+      <button id="saveTabBtn" class="primary">保存标签</button>
+      <button id="saveWindowBtn">窗口存为合集</button>
+      <button id="aiOrganizeBtn" class="ai-button">✦ AI 智能整理</button>
+    </section>
+
+    <section class="secondary-actions">
+      <button id="saveAllBtn">全部存为合集</button>
+      <button id="saveCloseBtn">保存并关闭</button>
+      <button id="dedupeBtn">查找重复项</button>
+    </section>
+
+    <nav class="tabs-nav">
+      <button class="nav-tab active" data-view="collections">标签合集</button>
+      <button class="nav-tab" data-view="todo">待办</button>
+      <button class="nav-tab" data-view="sessions">会话</button>
+      <button class="nav-tab" data-view="notes">笔记</button>
+    </nav>
+
+    <main>
+      <section id="collectionsView" class="view active">
+        <div class="section-head">
+          <div>
+            <h2>标签合集</h2>
+            <span id="tabCount" class="muted"></span>
+          </div>
+          <button id="addCollectionBtn">+ 新建合集</button>
+        </div>
+
+        <div class="collection-toolbar">
+          <div class="toolbar-left">
+            <button id="batchModeBtn">批量管理</button>
+            <button id="showArchivedBtn">已归档</button>
+            <select id="collectionSort" title="合集排序">
+              <option value="newest">最新优先</option>
+              <option value="oldest">最早优先</option>
+              <option value="name">按名称</option>
+            </select>
+          </div>
+          <div id="batchActions" class="batch-actions hidden">
+            <span id="selectedCount" class="muted">已选 0 个</span>
+            <button id="selectAllVisibleBtn">全选当前</button>
+            <button id="batchTodayBtn">加入今天</button>
+            <button id="batchDeleteBtn" class="danger-ghost">删除</button>
+            <button id="exitBatchBtn">完成</button>
+          </div>
+        </div>
+
+        <div id="searchResults" class="search-results hidden"></div>
+        <div id="collectionsList"></div>
+      </section>
+
+
+      <section id="collectionDetailView" class="view">
+        <div class="detail-topbar">
+          <button id="detailBackBtn" class="detail-back">← 返回</button>
+          <div class="detail-heading">
+            <h2 id="detailCollectionTitle">标签合集</h2>
+            <span id="detailCollectionMeta" class="muted"></span>
+          </div>
+          <button id="detailMoreBtn" class="icon-btn" title="合集操作">•••</button>
+        </div>
+
+        <div class="detail-toolbar">
+          <div class="toolbar-left">
+            <button id="detailSelectModeBtn">多选</button>
+            <button id="detailOpenAllBtn">全部打开</button>
+            <button id="detailAddCurrentBtn">+ 当前标签</button>
+          </div>
+          <div id="detailBatchActions" class="batch-actions hidden">
+            <span id="detailSelectedCount" class="muted">已选 0 个</span>
+            <button id="detailSelectAllBtn">全选</button>
+            <button id="detailOpenSelectedBtn">打开</button>
+            <button id="detailMoveSelectedBtn">移动</button>
+            <button id="detailDeleteSelectedBtn" class="danger-ghost">删除</button>
+            <button id="detailExitSelectBtn">完成</button>
+          </div>
+        </div>
+
+        <div class="detail-hint muted">拖动标签即可调整排序；进入“多选”后可批量移动到其他合集。</div>
+        <div id="detailTabList" class="detail-tab-list"></div>
+      </section>
+
+      <section id="todoView" class="view">
+        <div class="section-head">
+          <div>
+            <h2>待办</h2>
+            <span class="muted">把标签页变成可执行任务，而不是浏览器负担。</span>
+          </div>
+          <button id="addCurrentToTodayBtn">+ 当前标签</button>
+        </div>
+        <div id="todoBoard"></div>
+      </section>
+
+      <section id="sessionsView" class="view">
+        <div class="section-head">
+          <div>
+            <h2>会话</h2>
+            <span class="muted">保存并恢复完整的浏览器工作现场。</span>
+          </div>
+        </div>
+        <div id="sessionsList"></div>
+      </section>
+
+      <section id="notesView" class="view">
+        <div class="section-head">
+          <div>
+            <h2>笔记</h2>
+            <span class="muted">保存在本地的随手记。</span>
+          </div>
+        </div>
+        <textarea id="notesInput" placeholder="记录想法、稍后查看的链接、优先事项…"></textarea>
+        <div id="notesStatus" class="muted note-status"></div>
+      </section>
+    </main>
+
+    <footer>
+      <span>本地优先 · 不读取网页正文</span>
+      <div class="footer-actions">
+        <button id="importBtn" class="link-btn">导入</button>
+        <button id="exportBtn" class="link-btn">导出</button>
+        <input id="importInput" type="file" accept="application/json,.json" hidden />
+      </div>
+    </footer>
+  </div>
+
+  <dialog id="aiDialog">
+    <form method="dialog" class="dialog-shell">
+      <div class="dialog-head">
+        <div>
+          <h2>AI 智能整理</h2>
+          <p>仅使用标签页标题与网址进行本地智能分组。</p>
+        </div>
+        <button value="cancel" class="icon-btn" aria-label="关闭">×</button>
+      </div>
+
+      <div class="ai-source">
+        <label>
+          <input type="radio" name="aiSource" value="current" checked />
+          当前窗口
+        </label>
+        <label>
+          <input type="radio" name="aiSource" value="saved" />
+          已保存标签
+        </label>
+      </div>
+
+      <div class="ai-toolbar">
+        <button type="button" id="aiPreviewBtn" class="primary">生成整理建议</button>
+        <button type="button" id="aiSmartNameBtn">推荐工作区名称</button>
+      </div>
+
+      <div id="aiNameSuggestion" class="ai-name hidden"></div>
+      <div id="aiPreview" class="ai-preview"></div>
+
+      <div class="dialog-actions">
+        <button value="cancel">取消</button>
+        <button type="button" id="aiApplyBtn" class="primary" disabled>应用分组</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <dialog id="moveTabsDialog">
+    <form method="dialog" class="dialog-shell">
+      <div class="dialog-head">
+        <div>
+          <h2>移动标签</h2>
+          <p>选择目标标签合集。</p>
+        </div>
+        <button value="cancel" class="icon-btn" aria-label="关闭">×</button>
+      </div>
+      <div id="moveTargetList" class="move-target-list"></div>
+      <div class="dialog-actions">
+        <button value="cancel">取消</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="duplicateDialog">
+    <form method="dialog" class="dialog-shell">
+      <div class="dialog-head">
+        <div>
+          <h2>重复标签</h2>
+          <p>检测被重复保存的相同网址。</p>
+        </div>
+        <button value="cancel" class="icon-btn" aria-label="关闭">×</button>
+      </div>
+      <div id="duplicateList"></div>
+      <div class="dialog-actions">
+        <button value="cancel">关闭</button>
+        <button type="button" id="removeDuplicatesBtn" class="danger-ghost">删除重复副本</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="collectionTemplate">
+    <article class="collection-card">
+      <div class="collection-head">
+        <div class="collection-title-wrap">
+          <input class="collection-select hidden" type="checkbox" aria-label="选择标签合集" />
+          <button class="pin-btn icon-btn" title="置顶标签合集" aria-label="置顶标签合集">☆</button>
+          <div>
+            <h3 class="collection-title"></h3>
+            <span class="collection-meta muted"></span>
+          </div>
+        </div>
+        <div class="collection-actions">
+          <button class="open-all-btn">全部打开</button>
+          <button class="more-btn icon-btn" title="标签合集菜单" aria-label="标签合集菜单">•••</button>
+        </div>
+      </div>
+      <div class="drop-zone">
+        <div class="tab-list"></div>
+        <div class="empty-state">将已保存标签拖到这里，或把当前窗口保存为新的时间合集。</div>
+      </div>
+    </article>
+  </template>
+
+
+  <div id="tabContextMenu" class="tab-context-menu hidden" role="menu">
+    <div class="tab-context-title">移动到标签合集</div>
+    <div id="tabContextTargets"></div>
+    <div class="tab-context-separator"></div>
+    <button id="tabContextNewCollection" type="button">新建时间合集并移动</button>
+  </div>
+
+  <script src="ai.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>
